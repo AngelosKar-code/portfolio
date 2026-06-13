@@ -1,123 +1,156 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Globe2, Mail, Menu, X } from 'lucide-react';
 import { useLanguage } from './LanguageContext';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Globe, Mail } from 'lucide-react';
+import Magnetic from './Magnetic';
 
 export default function Navbar() {
   const { locale, toggleLocale, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const pathname = usePathname();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 16);
+    onScroll();
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   const navLinks = [
-    { name: t.nav.home, href: '/#top' },
-    { name: t.nav.services, href: '/#services' },
-    { name: t.nav.skills, href: '/#skills' },
+    { name: t.nav.home, href: '#top' },
+    { name: t.nav.showcase, href: '#showcase' },
+    { name: t.nav.services, href: '#services' },
+    { name: t.nav.skills, href: '#skills' },
   ];
 
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (pathname === '/' && href.startsWith('/#')) {
-      e.preventDefault();
-      const el = document.getElementById(href.replace('/#', ''));
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-      setIsOpen(false);
-    }
+  const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    event.preventDefault();
+    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+    setIsOpen(false);
   };
 
   return (
     <motion.nav
-      initial={{ y: -100, opacity: 0 }}
+      initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled || isOpen
-          ? 'bg-[#030303]/80 backdrop-blur-lg border-b border-white/[0.06] shadow-lg'
-          : 'bg-transparent border-b border-transparent'
+      transition={{ duration: 0.55, ease: 'easeOut' }}
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+        scrolled || isOpen ? 'border-b border-white/5 bg-[#020204]/42 backdrop-blur-xl' : 'border-b border-transparent bg-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="relative w-11 h-11 rounded-xl overflow-hidden border border-white/10 group-hover:border-neon-cyan/40 transition-all bg-black flex items-center justify-center p-1">
-              <Image src="/logo.png" alt="Logo" width={36} height={36} className="object-contain group-hover:scale-110 transition-transform duration-300" />
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-20 items-center justify-between">
+          <a href="#top" onClick={(event) => handleLinkClick(event, '#top')} className="group flex items-center gap-3">
+            <div className="relative h-10 w-10 border border-white/10 bg-black/60 p-1 transition group-hover:border-[#00f0ff] rounded-lg">
+              <div className="hud-corner hud-corner-tl" />
+              <div className="hud-corner hud-corner-tr" />
+              <div className="hud-corner hud-corner-bl" />
+              <div className="hud-corner hud-corner-br" />
+              <Image src="/logo.png" alt="Angelos Karampalasis logo" width={40} height={40} className="h-full w-full object-contain" />
             </div>
-            <span className="text-lg font-extrabold tracking-wider bg-gradient-to-r from-white via-slate-300 to-slate-500 bg-clip-text text-transparent group-hover:from-neon-cyan group-hover:to-neon-purple transition-all duration-500 hidden sm:block">
-              ANGELOS K.
-            </span>
-          </Link>
+            <div className="hidden leading-none sm:block">
+              <div className="font-mono text-xs font-black uppercase tracking-[0.2em] text-white">ANGELOS_K.</div>
+              <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.18em] text-[#00f0ff] flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 bg-[#00f0ff] rounded-full hud-blink" />
+                <span>ONLINE_AVAILABLE</span>
+              </div>
+            </div>
+          </a>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden items-center gap-2 md:flex">
             {navLinks.map((link) => (
               <a
-                key={link.name}
+                key={link.href}
                 href={link.href}
-                onClick={(e) => handleLinkClick(e, link.href)}
-                className="text-sm font-medium text-slate-400 hover:text-white transition-colors relative py-2 group"
+                onClick={(event) => handleLinkClick(event, link.href)}
+                className="px-4 py-2 font-mono text-xs font-bold uppercase tracking-[0.14em] text-slate-400 transition hover:text-[#00f0ff] relative group/item"
               >
+                <span className="opacity-0 group-hover/item:opacity-100 text-[#00f0ff] transition-opacity duration-300">/ </span>
                 {link.name}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-neon-cyan to-neon-purple transition-all duration-300 group-hover:w-full" />
               </a>
             ))}
-
-            <button
-              onClick={toggleLocale}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-white/[0.06] hover:border-neon-cyan/30 text-slate-400 hover:text-neon-cyan transition-all text-sm font-semibold bg-white/[0.03] cursor-pointer"
-            >
-              <Globe className="w-3.5 h-3.5" />
-              <span>{locale === 'el' ? 'EN' : 'ΕΛ'}</span>
-            </button>
-
-            <a
-              href="mailto:aggelos3karabalasis@gmail.com"
-              className="px-5 py-2.5 rounded-xl font-bold text-sm text-black bg-white hover:bg-neon-cyan shadow-neon-cyan/20 hover:shadow-neon-cyan/40 transition-all flex items-center space-x-2"
-            >
-              <Mail className="w-4 h-4" />
-              <span>{t.nav.hireMe}</span>
-            </a>
           </div>
 
-          {/* Mobile */}
-          <div className="md:hidden flex items-center space-x-3">
-            <button onClick={toggleLocale} className="px-2.5 py-1.5 rounded-lg border border-white/[0.06] text-slate-400 text-sm bg-white/[0.03] cursor-pointer">
-              {locale === 'el' ? 'EN' : 'ΕΛ'}
+          <div className="hidden items-center gap-3 md:flex">
+            <Magnetic strength={0.15}>
+              <button
+                type="button"
+                onClick={toggleLocale}
+                className="px-3 py-2 font-mono text-xs font-bold tracking-wider hover:text-white transition"
+                aria-label="Toggle language"
+              >
+                <span className={locale === 'el' ? 'text-[#00f0ff]' : 'text-slate-500'}>GR</span>
+                <span className="text-slate-600 mx-1.5">/</span>
+                <span className={locale === 'en' ? 'text-[#00f0ff]' : 'text-slate-500'}>EN</span>
+              </button>
+            </Magnetic>
+            <Magnetic strength={0.25}>
+              <a
+                href="mailto:aggelos3karabalasis@gmail.com"
+                className="inline-flex items-center gap-2 border border-[#00f0ff]/40 bg-white px-4 py-2 font-mono text-[10px] font-black uppercase tracking-[0.12em] text-black transition hover:bg-[#00f0ff] rounded-lg"
+                data-cursor="hovered"
+              >
+                <Mail className="h-3.5 w-3.5" />
+                <span>{t.nav.hireMe}</span>
+              </a>
+            </Magnetic>
+          </div>
+
+          {/* Mobile Nav triggers */}
+          <div className="flex items-center gap-2 md:hidden">
+            <button
+              type="button"
+              onClick={toggleLocale}
+              className="px-2 py-1 font-mono text-xs font-bold"
+              aria-label="Toggle language"
+            >
+              <span className={locale === 'el' ? 'text-[#00f0ff]' : 'text-slate-500'}>GR</span>
+              <span className="text-slate-600 mx-1.5">/</span>
+              <span className={locale === 'en' ? 'text-[#00f0ff]' : 'text-slate-500'}>EN</span>
             </button>
-            <button onClick={() => setIsOpen(!isOpen)} className="text-slate-300 hover:text-white p-2 rounded-lg border border-white/10 cursor-pointer">
-              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            <button
+              type="button"
+              onClick={() => setIsOpen((value) => !value)}
+              className="border border-white/5 bg-white/[0.02] p-2 text-slate-200 rounded-lg"
+              aria-label="Toggle menu"
+            >
+              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-white/[0.06] bg-[#030303] overflow-hidden"
+            className="border-t border-white/5 bg-[#020204] md:hidden"
           >
-            <div className="px-4 pt-2 pb-6 space-y-3">
+            <div className="space-y-1 px-4 py-5 font-mono">
               {navLinks.map((link) => (
-                <a key={link.name} href={link.href} onClick={(e) => handleLinkClick(e, link.href)} className="block px-3 py-2.5 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all">
-                  {link.name}
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(event) => handleLinkClick(event, link.href)}
+                  className="block border border-transparent px-3 py-3 text-sm font-bold uppercase tracking-[0.14em] text-slate-300 transition hover:bg-white/[0.02] hover:text-[#00f0ff]"
+                >
+                  / {link.name}
                 </a>
               ))}
-              <a href="mailto:aggelos3karabalasis@gmail.com" onClick={() => setIsOpen(false)} className="block w-full text-center px-4 py-3 rounded-xl bg-gradient-to-r from-neon-cyan to-neon-purple text-white font-bold">
-                {t.nav.hireMe}
+              <a
+                href="mailto:aggelos3karabalasis@gmail.com"
+                onClick={() => setIsOpen(false)}
+                className="mt-3 flex items-center justify-center gap-2 border border-[#00f0ff]/40 bg-[#00f0ff] px-4 py-3 text-xs font-black uppercase tracking-[0.12em] text-black rounded-lg"
+              >
+                <Mail className="h-4 w-4" />
+                <span>{t.nav.hireMe}</span>
               </a>
             </div>
           </motion.div>
