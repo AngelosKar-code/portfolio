@@ -17,11 +17,27 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : "http://localhost:3000"
+  ),
   title: "Angelos Karampalasis | Interactive Web Developer",
   description:
     "One-page portfolio showcase for WordPress, React, Next.js, Three.js, GSAP, e-commerce, performance, and modern web experiences.",
   keywords: ["Angelos Karampalasis", "Interactive Web Developer", "Three.js", "GSAP", "WordPress", "React", "Next.js", "WooCommerce"],
   authors: [{ name: "Angelos Karampalasis" }],
+  openGraph: {
+    title: "Angelos Karampalasis | Interactive Web Developer",
+    description: "One-page portfolio showcase for WordPress, React, Next.js, Three.js, GSAP, e-commerce, performance, and modern web experiences.",
+    type: "website",
+    locale: "el_GR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Angelos Karampalasis | Interactive Web Developer",
+    description: "One-page portfolio showcase for WordPress, React, Next.js, Three.js, GSAP, e-commerce, performance, and modern web experiences.",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
