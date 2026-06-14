@@ -30,6 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Angelos Karampalasis | Interactive Web Developer",
     description: "One-page portfolio showcase for WordPress, React, Next.js, Three.js, GSAP, e-commerce, performance, and modern web experiences.",
+    url: "/",
     type: "website",
     locale: "el_GR",
   },
